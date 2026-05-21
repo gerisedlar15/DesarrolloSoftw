@@ -1,84 +1,95 @@
-//importamos express
+// Importamos express y módulos necesarios
 import express from "express"
 import db from './conexion.js'
-//1: creamos una bella instancia de app :)
+import readline from 'readline'
+
+// 1: Creamos la instancia de la app
 const app = express()
 
-app.get("/", (req, res)=>{
+app.get("/", (req, res) => {
     res.send("<h1>si aparece soy una crackk/ <h1>")
 })
-app.get("/usuarios",(req,res)=> {
-    const usuarios= [
+
+app.get("/usuarios", (req, res) => {
+    const usuarios = [
         { 
-            id:1,
+            id: 1,
             nombre: "geru",
         }
     ]
-
     res.json(usuarios)
 })
 
-import readline from 'readline'; // 👈 Agregamos el lector de consola arriba de la función
-
+// 2: Definimos la función interactiva de la reunión
 const iniciarReunionNovios = () => {
-    // Creamos la interfaz para preguntar y leer respuestas por consola
+    // Creamos la interfaz del lector de consola
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
 
-    console.log("\n-------------------CARGA DE NOVIOS --------------------------------");
+    console.log("\n------------------- CARGA DE NOVIO A --------------------------------");
 
-    rl.question("👰🤵 Nombre y Apellido del Novio A: ", (novioA) => {
-        rl.question("👰🤵 Nombre y Apellido del Novio B: ", (novioB) => {
-            rl.question("📞 Teléfono de contacto: ", (tel) => {
-                rl.question("📧 Correo Electrónico: ", (correo) => {
+    // Empezamos preguntando por el Novio A
+    rl.question(" Nombre y Apellido del Novio A: ", (novioA) => {
+        rl.question(" Teléfono de contacto A: ", (telA) => {
+            rl.question(" Correo Electrónico A: ", (correoA) => {
 
-                    // Armamos la query usando los datos reales que ingresaste vos
-                    const query = "INSERT INTO novios (nombreApeNovioA, nombreApeNovioB, telefono, correoElect) VALUES (?, ?, ?, ?)";
-                    const datos = [novioA, novioB, tel, correo];
+                // Guardamos en la tabla 'novioA'
+                const queryA = "INSERT INTO novioA (nombreApeNovioA, telefono, correoElect) VALUES (?, ?, ?)";
+                const datosA = [novioA, telA, correoA];
 
-                    // Mandamos los datos fresquitos a tu phpMyAdmin
-                    db.query(query, datos, (err, resultado) => {
-                        if (err) {
-                            console.error("\nError al guardar en la base de datos:", err.message);
-                        } else {
-                            console.log("\n-------------------------------------------");
-                            console.log(`🎉 ¡Boda creada con éxito en MySQL!`);
-                            console.log(`🆔 ID asignado automáticamente: ${resultado.insertId}`);
-                            console.log("-------------------------------------------");
-                        }
-                        
-                        rl.close(); // Cerramos el lector de consola al terminar
+                db.query(queryA, datosA, (errA, resultadoA) => {
+                    if (errA) {
+                        console.error("\n❌ Error al guardar el Novio A:", errA.message);
+                        rl.close();
+                        return;
+                    }
+
+                    console.log("\n-------------------------------------------");
+                    console.log(` DATOS DE NOVIO A GUARDADOS CORRECTAMENTE`);
+                    console.log(`ID asignado: ${resultadoA.insertId}`);
+                    console.log("-------------------------------------------");
+
+                    // ADENTRO del éxito de A, abrimos la carga de B
+                    console.log("\n------------------- CARGA DE NOVIO B --------------------------------");
+
+                    rl.question(" Nombre y Apellido del Novio B: ", (novioB) => {
+                        rl.question(" Teléfono de contacto B: ", (telB) => {
+                            rl.question(" Correo Electrónico B: ", (correoB) => {
+
+                                // Guardamos en la tabla 'novioB'
+                                const queryB = "INSERT INTO novioB (nombreApeNovioB, telefono, correoElect) VALUES (?, ?, ?)";
+                                const datosB = [novioB, telB, correoB];
+
+                                db.query(queryB, datosB, (errB, resultadoB) => {
+                                    if (errB) {
+                                        console.error("\n❌ Error al guardar el Novio B:", errB.message);
+                                    } else {
+                                        console.log("\n-------------------------------------------");
+                                        console.log(` DATOS DEL NOVIO B GUARDADOS CORRECTAMENTE`);
+                                        console.log(`ID asignado: ${resultadoB.insertId}`);
+                                        console.log("-------------------------------------------");
+                                    }
+
+                                    // Cuando ambos terminaron, cerramos la consola
+                                    rl.close();
+                                });
+                            });
+                        });
                     });
+
                 });
             });
         });
     });
-}
-// Ejecutamos el simulador interactivo apenas enciende el servidor
-iniciarReunionNovios();
-
-const noviosInsert = () => {
-    const query = "INSERT INTO novios (nombreApeNovioA, nombreApeNovioB, telefono, correoElect) VALUES (?, ?, ?, ?)";
-    const datos = ["Geraldine", "angelo", "123", "gerisedlar15@gmail.com"];
-
-    db.query(query, datos, (err, resultado) => {
-        if (err) {
-            console.error("❌ Error al insertar en la tabla novios:", err.message);
-            return;
-        }
-        console.log("🎉 ¡Novios guardados con éxito! ID generado:", resultado.insertId);
-    });
 };
 
-// La llamamos acá mismo en app.js
-//noviosInsert();
+// 3: Ejecutamos la función interactiva al levantar el servidor
+iniciarReunionNovios();
 
-
+// 4: Escuchamos nuestra app
 const PORT = 3001
-//"escuchamos "nuestar app
 app.listen(PORT, () => {
     console.log('escuchando en http://localhost:3001')
 })
-
