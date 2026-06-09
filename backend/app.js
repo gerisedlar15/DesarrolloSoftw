@@ -46,7 +46,7 @@ const registrarPlanner = (lector) => {
 // FUNCIÓN OPCIÓN 2: REGISTRAR PERSONA/NOVIO
 // =================================================================
 const registrarNuevaPersonaNovio = (lector) => {
-    console.log('\n--- 👤 REGISTRO DE NUEVA PERSONA (NOVIO/A) ---');
+    console.log('\n--- REGISTRO DE NUEVA PERSONA (NOVIO/A) ---');
     lector.question('Ingresá NOMBRE Y APELLIDO: ', (nombreApe) => {
         lector.question('Ingresá el TELÉFONO: ', (telefono) => {
             lector.question('Ingresá el EMAIL: ', (correoElect) => {
@@ -91,8 +91,64 @@ const registrarNuevaPersonaNovio = (lector) => {
     });
 };
 
+const registrarBoda = (lector) => {
+    console.log('\n---  REGISTRO DE NUEVA BODA ---');
+    lector.question('  Ingresa FECHA Y HORA (AAAA-MM-DD HH:MM:SS): ', (fechaHoraPlanif) => {
+        lector.question('  Ingresá el PRESUPUESTO ($): ', (presupuesto) => {
+            lector.question('Ingresá la SEÑA ($): ', (seniaBoda) => {
+                lector.question('Ingresá el ESTADO (Planificada, En Proceso, Finalizada): ', (estadoBoda) => {
+                    lector.question('Ingresá el ID del PLANNER asignado: ', (idPlanner) => {
+                        
+                        // Pedimos los novios que van a ir a la tabla intermedia
+                        lector.question('Ingresá el ID del NOVIO 1: ', (idNovio1) => {
+                            lector.question(' Ingresá el ID del NOVIO 2: ', (idNovio2) => {
+
+                                console.log('\n Conectando con mozzafiato...');
+
+                                //Insertar en la tabla boda con tus columnas reales
+                                const sqlBoda = `
+                                    INSERT INTO boda (fechaHoraPlanif, presupuesto, seniaBoda, estadoBoda, idPlanner) 
+                                    VALUES (?, ?, ?, 'Planificada', ?);
+                                `;
+
+                                db.query(sqlBoda, [fechaHoraPlanif, presupuesto, seniaBoda, idPlanner], (errorBoda, resultadoBoda) => {
+                                    if (errorBoda) {
+                                        console.error(' Error al crear la Boda:', errorBoda.message);
+                                        preguntarSiContinuar(lector);
+                                        return;
+                                    }
+                                    // Capturamos el ID que generó automáticamente 
+                                    const nuevoIdBoda = resultadoBoda.insertId;
+                                    console.log(`\n Boda creada con éxito. ID asignado: ${nuevoIdBoda}`);
+
+                                    //Insertar en la tabla intermedia boda_novio
+                                    const sqlBodaNovio = `
+                                        INSERT INTO boda_novio (idBoda, idNovio) 
+                                        VALUES (?, ?), (?, ?);
+                                    `;
+
+                                    db.query(sqlBodaNovio, [nuevoIdBoda, idNovio1, nuevoIdBoda, idNovio2], (errorIntermedia) => {
+                                        if (errorIntermedia) {
+                                            console.error('Error en la tabla intermedia:', errorIntermedia.message);
+                                            preguntarSiContinuar(lector);
+                                            return;
+                                        }
+
+                                        console.log(`\nLa boda N° ${nuevoIdBoda} fue registrada y los novios ${idNovio1} y ${idNovio2} quedaron asociados.`);
+                                        preguntarSiContinuar(lector);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+};
+
 const preguntarSiContinuar = (lector) => {
-    lector.question('¿Desea realizar otra operación? (S para Sí / N para Salir y finalizar): ', (respuesta) => {
+    lector.question('¿Desea realizar otra operación? (S para Si N para Salir y finalizar): ', (respuesta) => {
         if (respuesta.toUpperCase() === 'S') {
             lector.close();
             mostrarMenu(); 
@@ -114,13 +170,16 @@ const mostrarMenu = () => {
     console.log('=======================================');
     console.log(' 1. Crear un nuevo Planner');
     console.log(' 2. Crear una nueva Persona (Novio/a)');
+    console.log(' 3. Crear una nueva Boda');
     console.log('=======================================');
     
-    lector.question('Elija una opción (1 o 2): ', (opcion) => {
+    lector.question('Elija una opción 1, 2 o 3): ', (opcion) => {
         if (opcion === '1') {
             registrarPlanner(lector); 
         } else if (opcion === '2') {
             registrarNuevaPersonaNovio(lector); 
+        } else if (opcion === '3') {
+            registrarBoda(lector);
         } else {
             console.log('Opción no válida.intente de nuevo.');
             lector.close();
