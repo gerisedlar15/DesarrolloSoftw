@@ -14,15 +14,13 @@ app.get("/usuarios", (req, res) => {
     const usuarios = [
         { 
             id: 1,
-            name: "geru",
+            name: "geru hola ",
         }
     ]
     res.json(usuarios)
 })
 
-// =================================================================
 // FUNCIÓN OPCIÓN 1: REGISTRAR PLANNER
-// =================================================================
 const registrarPlanner = (lector) => {
     console.log('\n--- 📝 REGISTRO DE NUEVO PLANNER ---');
     lector.question('Ingresá NOMBRE del Planner: ', (nombrePlanner) => {
@@ -31,20 +29,19 @@ const registrarPlanner = (lector) => {
         
         db.query(sqlPlanner, [nombrePlanner], (error, resultado) => {
             if (error) {
-                console.error('❌ Error al guardar el Planner:', error.message);
+                console.error('Error al guardar el Planner:', error.message);
                 lector.close();
                 return;
             }
-            console.log(`\n✅ ¡Éxito! El planner "${nombrePlanner}" se guardó con ID: ${resultado.insertId}\n`);
+            console.log(`\n El planner "${nombrePlanner}" se guardó con ID: ${resultado.insertId}\n`);
             lector.close(); 
             preguntarSiContinuar(lector);
         });
     });
 };
 
-// =================================================================
+
 // FUNCIÓN OPCIÓN 2: REGISTRAR PERSONA/NOVIO
-// =================================================================
 const registrarNuevaPersonaNovio = (lector) => {
     console.log('\n--- REGISTRO DE NUEVA PERSONA (NOVIO/A) ---');
     lector.question('Ingresá NOMBRE Y APELLIDO: ', (nombreApe) => {
@@ -80,7 +77,6 @@ const registrarNuevaPersonaNovio = (lector) => {
                                 lector.close();
                                 return;
                             }
-
                             console.log(`El novio "${nombreApe}" ya está guardado en ambas tablas.\n`);
                             preguntarSiContinuar(lector);
                         });
@@ -146,6 +142,34 @@ const registrarBoda = (lector) => {
         });
     });
 };
+const registrarServicios = (lector) =>{
+    console.log('\n---  REGISTRO DE NUEVO SERVICIO ---');
+    lector.question('Ingresar nombre de nuevo servicio: ' , (nombre)=> {
+        lector.question('Ingresar telefono :',(telefono)=>{
+            lector.question('ingresar email:',(email)=>{
+                lector.question('Ingresar descripcion del servicio :',(descripcion)=>{
+                    console.log('\n Conectando con mozzafiato...');
+
+                    const sqlBoda = `
+                                    INSERT INTO servicios (nombre, telefono, email, descripcion) 
+                                    VALUES (?, ?, ?, ?);
+                                `;
+
+                                db.query(sqlBoda, [nombre, telefono, email, descripcion,], (errorServicios, resultadoServicios) => {
+                                    if (errorServicios) {
+                                        console.error(' Error al crear el servicio:', errorServicios.message);
+                                        preguntarSiContinuar(lector);
+                                        return;
+                                    }
+                                })
+
+                })
+
+            } )
+        } )
+
+    })
+};  
 
 const preguntarSiContinuar = (lector) => {
     lector.question('¿Desea realizar otra operación? (S para Si N para Salir y finalizar): ', (respuesta) => {
@@ -171,6 +195,7 @@ const mostrarMenu = () => {
     console.log(' 1. Crear un nuevo Planner');
     console.log(' 2. Crear una nueva Persona (Novio/a)');
     console.log(' 3. Crear una nueva Boda');
+    console.log(' 4. Crear un nuevo servicio');
     console.log('=======================================');
     
     lector.question('Elija una opción 1, 2 o 3): ', (opcion) => {
@@ -180,7 +205,10 @@ const mostrarMenu = () => {
             registrarNuevaPersonaNovio(lector); 
         } else if (opcion === '3') {
             registrarBoda(lector);
-        } else {
+        } else if (opcion == '4'){
+            registrarServicios(lec)
+        }
+        else {
             console.log('Opción no válida.intente de nuevo.');
             lector.close();
         }
