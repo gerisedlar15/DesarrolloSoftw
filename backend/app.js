@@ -165,13 +165,10 @@ const mostrarMenu = () => {
         output: process.stdout
     });
 
-    console.log('\n=======================================');
     console.log('        MENÚ DE MOZZAFIATO         ');
-    console.log('=======================================');
     console.log(' 1. Crear un nuevo Planner');
     console.log(' 2. Crear una nueva Persona (Novio/a)');
     console.log(' 3. Crear una nueva Boda');
-    console.log('=======================================');
     
     lector.question('Elija una opción 1, 2 o 3): ', (opcion) => {
         if (opcion === '1') {
