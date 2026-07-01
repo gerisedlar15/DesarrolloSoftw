@@ -196,18 +196,20 @@ const mostrarMenu = () => {
     console.log(' 4. Crear un nuevo servicio');
     console.log('=======================================');
     
-    lector.question('Elija una opción 1, 2 o 3): ', (opcion) => {
+    lector.question('Elija una opción 1, 2, 3 o 4): ', (opcion) => {
         if (opcion === '1') {
             registrarPlanner(lector); 
         } else if (opcion === '2') {
             registrarNuevaPersonaNovio(lector); 
         } else if (opcion === '3') {
             registrarBoda(lector);
-        } else if (opcion == '4'){
-            registrarServicios(lec)
+        } else if (opcion === '4') {
+            registrarServicios(lector);
+        } else if (opcion == '5'){
+            registrarServicios(lector)
         }
         else {
-            console.log('Opción no válida.intente de nuevo.');
+            console.log('Opción no válida intente de nuevo.');
             lector.close();
         }
     });
