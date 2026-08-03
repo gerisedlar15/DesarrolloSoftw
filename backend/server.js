@@ -1,21 +1,23 @@
-import express from 'express';
-import cors from 'cors';
-import db from './conexion.js'; // Traemos tu conexión perfecta a MySQL
+ import express from 'express';
+ import cors from 'cors';
+ import db from './conexion.js'; // Traemo la conexión a la base de datos desde el archivo conexion.js
 
-const app = express();
+ const app = express();
 
-// Configuraciones básicas
+// // Configuraciones básicas
 app.use(cors()); // Le da permiso al frontend para conectarse
 app.use(express.json()); // Le enseña al backend a leer paquetes JSON
 
-//  NUESTRA PRIMERA PUERTA WEB (Endpoint)
 app.post('/api/planner', (req, res) => {
-    const nombre = req.body.nombre; // Agarramos el nombre que nos manda el Frontend
+    const nombre = req.body.nombre;
+    const usuario = req.body.usuario;
+    const contrasenia = req.body.contrasenia;
+     // Agarramos el nombre que nos manda el Frontend
     
     // Tu misma consulta SQL de siempre
-    const sql = "INSERT INTO planner (nombre) VALUES (?)";
-    
-    db.query(sql, [nombre], (error, resultado) => {
+    const sql = 'INSERT INTO planner (nombre, usuario, contrasenia) VALUES (?, ?, ?)';
+    //msj de error y exito
+    db.query(sql, [nombre, usuario, contrasenia], (error, resultado) => {
         if (error) {
             console.error(error);
             return res.status(500).json({ error: "Error al guardar en la base de datos" });
