@@ -1,34 +1,37 @@
- import express from 'express';
- import cors from 'cors';
- import db from './conexion.js'; // Traemo la conexión a la base de datos desde el archivo conexion.js
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cors from 'cors';
+import db from './conexion.js';
 
- const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// // Configuraciones básicas
-app.use(cors()); // Le da permiso al frontend para conectarse
-app.use(express.json()); // Le enseña al backend a leer paquetes JSON
+const app = express();
+const PORT = 3000;
 
+app.use(cors());
+app.use(express.json());
+
+// Servir la carpeta frontend completa públicamente
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Endpoint para recibir el registro del planner desde la web
 app.post('/api/planner', (req, res) => {
-    const nombre = req.body.nombre;
-    const usuario = req.body.usuario;
-    const contrasenia = req.body.contrasenia;
-     // Agarramos el nombre que nos manda el Frontend
+    const { nombre, usuario, contrasenia } = req.body;
     
-    // Tu misma consulta SQL de siempre
     const sql = 'INSERT INTO planner (nombre, usuario, contrasenia) VALUES (?, ?, ?)';
-    //msj de error y exito
+    
     db.query(sql, [nombre, usuario, contrasenia], (error, resultado) => {
         if (error) {
             console.error(error);
             return res.status(500).json({ error: "Error al guardar en la base de datos" });
         }
-        console.log("¡Se guardó un nuevo Planner (desde la web locuraaaaaa)");
+        console.log("¡Se guardó un nuevo Planner desde la web!");
         res.json({ mensaje: "Éxito total", id: resultado.insertId });
     });
 });
 
-// Prendemos los motores
-const PUERTO = 3001;
-app.listen(PUERTO, () => {
-    console.log(` API REST encendida y escuchando en http://localhost:${PUERTO}`);
+app.listen(PORT, () => {
+    console.log(`Servidor unificado funcionando en http://localhost:${PORT}`);
 });
