@@ -37,7 +37,7 @@ app.post('/api/persona', (req, res) => {
     const { nombreApe, telefono, correoElect, observacion } = req.body;
     
     // 2. Preparamos la orden para MySQL (asumiendo que crearás una tabla llamada 'persona')
-    const sql = 'INSERT INTO persona (nombre_ape, telefono, correo_elect, observacion) VALUES (?, ?, ?, ?)';
+    const sql = 'INSERT INTO persona (nombreApe, telefono, correoElect, observacion) VALUES (?, ?, ?, ?)';
     
     // 3. Ejecutamos la orden enviando los datos en el orden de los signos de interrogación (?)
     db.query(sql, [nombreApe, telefono, correoElect, observacion], (error, resultado) => {
