@@ -5,7 +5,7 @@ import readline from 'readline'
 
 // 1: Creamos la instancia de la app
 const app = express()
-
+//app donde esta el srervidor, y la callback donde va a estar la lógica que se ejecuta cuando el servidor arranca
 app.get("/", (req, res) => {
     res.send("<h1>si aparece soy una crackk/ <h1>")
 })
@@ -14,111 +14,209 @@ app.get("/usuarios", (req, res) => {
     const usuarios = [
         { 
             id: 1,
-            nombre: "geru",
+            name: "geru hola ",
         }
     ]
     res.json(usuarios)
 })
 
-// 2: Definimos la función interactiva de la reunión
-const iniciarReunionNovios = () => {
-    // Creamos la interfaz del lector de consola
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
+// FUNCIÓN OPCIÓN 1: REGISTRAR PLANNER
+const registrarPlanner = (lector) => {
+    console.log('\n---  REGISTRO DE NUEVO PLANNER ---');
+    lector.question('Ingresá NOMBRE del Planner: ', (nombrePlanner) => {
+        
+        const sqlPlanner = "INSERT INTO planner (nombre) VALUES (?);";
+        
+        db.query(sqlPlanner, [nombrePlanner], (error, resultado) => {
+            if (error) {
+                console.error('Error al guardar el Planner:', error.message);
+                lector.close();
+                return;
+            }
+            console.log(`\n El planner "${nombrePlanner}" se guardó con ID: ${resultado.insertId}\n`);
+            lector.close(); 
+            preguntarSiContinuar(lector);
+        });
     });
+};
 
-    console.log("\n------------------- CARGA DE NOVIO A --------------------------------");
 
-    // Empezamos preguntando por el Novio A
-    rl.question(" Nombre y Apellido del Novio A: ", (nombreApeNovioA) => {
-        rl.question(" Teléfono de contacto A: ", (telefonNovioA) => {
-            rl.question(" Correo Electrónico A: ", (correoElectNovioA) => {
+// FUNCIÓN OPCIÓN 2: REGISTRAR PERSONA/NOVIO
+const registrarNuevaPersonaNovio = (lector) => {
+    console.log('\n--- REGISTRO DE NUEVA PERSONA (NOVIO/A) ---');
+    lector.question('Ingresá NOMBRE Y APELLIDO: ', (nombreApe) => {
+        lector.question('Ingresá el TELÉFONO: ', (telefono) => {
+            lector.question('Ingresá el EMAIL: ', (correoElect) => {
+                lector.question('Ingresá observacion: ', (observacion) => {
 
-                // Guardamos en la tabla 'novioA'
-                const queryA = "INSERT INTO novioA (nombreApeNovioA, telefonoNovioA, correoElectNovioA) VALUES (?, ?, ?)";
-                const datosA = [nombreApeNovioA, telefonNovioA, correoElectNovioA];
+                    console.log('\ Conectando con mozzafiato bd...');
 
-                db.query(queryA, datosA, (errA, resultadoA) => {
-                    if (errA) { 
-                        console.error("\n Error al guardar el Novio A:", errA.message);
-                        rl.close();
-                        return;
-                    }
-                    
-                    const idNovioA = resultadoA.insertId; // CAPTURAMOS EL ID DE A
-                    console.log("\n-------------------------------------------");
-                    console.log(` DATOS DE NOVIO A GUARDADOS CORRECTAMENTE`);
-                    console.log(`ID asignado: ${idNovioA}`);
-                    console.log("-------------------------------------------");
+                    const sqlPersona = `
+                        INSERT INTO persona (nombreApe, telefono, correoElect, observacion, rol) 
+                        VALUES (?, ?, ?, ?, 'Novio');
+                    `;
 
-                    // ADENTRO del éxito de A, abrimos la carga de B
-                    console.log("\n------------------- CARGA DE NOVIO B --------------------------------");
+                    db.query(sqlPersona, [nombreApe, telefono, correoElect, observacion], (errorPersona, resultadoPersona) => {
+                        if (errorPersona) {
+                            console.error('Error al guardar la Persona:', errorPersona.message);
+                            lector.close();
+                            return;
+                        }
 
-                    rl.question(" Nombre y Apellido del Novio B: ", (nombreApeNovioB) => {
-                        rl.question(" Teléfono de contacto B: ", (telefonoNovioB) => {
-                            rl.question(" Correo Electrónico B: ", (correoElectNovioB) => {
+                        const nuevoIdPersona = resultadoPersona.insertId;
+                        console.log(`\nPersona creada con éxito. ID asignado: ${nuevoIdPersona}`);
 
-                                // Guardamos en la tabla 'novioB'
-                                const queryB = "INSERT INTO novioB (nombreApeNovioB, telefonoNovioB, correoElectNovioB) VALUES (?, ?, ?)";
-                                const datosB = [nombreApeNovioB, telefonoNovioB, correoElectNovioB];
+                        const sqlNovio = `
+                            INSERT INTO novio (idNovio) 
+                            VALUES (?);
+                        `;
 
-                                db.query(queryB, datosB, (errB, resultadoB) => { // 
-                                    if (errB) {
-                                        console.error("\n Error al guardar el Novio B:", errB.message);
-                                        rl.close();
-                                        return;
-                                    } 
-                                    
-                                    const idNovioB = resultadoB.insertId; // 
-                                    console.log("\n-------------------------------------------");
-                                    console.log(` DATOS DEL NOVIO B GUARDADOS CORRECTAMENTE`);
-                                    console.log(`ID asignado: ${idNovioB}`);
-                                    console.log("-------------------------------------------");
-                                    
-                                    // ADENTRO del éxito de B, abrimos la carga de la Boda
-                                    console.log("\n------------------- CARGA DE BODA --------------------------------");
-                                    rl.question(" Fecha y Hora de Boda (AAAA-MM-DD HH:MM:SS): ", (fechaHora) => {
-                                        rl.question(" Presupuesto Total ($): ", (presupuesto) => {
-                                            rl.question(" Valor de la Seña ($): ", (señaBoda) => {
-                                                
-                                                // La query lleva NOW() directo, por lo que solo requiere 5 signos '?'
-                                                const queryBoda= "INSERT INTO boda (fechaHora, fechaHoraPlanif, presupuesto, señaBoda, idNovioA, idNovioB, estado) VALUES (?, NOW(), ?, ?, ?, ?, 1)";
-                                                
-                                                // Pasamos exactamente las 5 variables que corresponden a los '?'
-                                                const datosBoda = [fechaHora, presupuesto, señaBoda, idNovioA, idNovioB]; 
-
-                                                db.query(queryBoda, datosBoda, (errBoda, resultadoBoda) => {
-                                                    if (errBoda) {
-                                                        console.error("\n Error al guardar la boda:", errBoda.message);
-                                                    } else {
-                                                        console.log("\n===========================================================");
-                                                        console.log(`BOD CREADO Y VINCULADO EN CONSOLA CON ÉXITO!`);
-                                                        console.log(`ID del Evento asignado: ${resultadoBoda.insertId}`);
-                                                        console.log(`Vinculado a Novio A (ID: ${idNovioA}) y Novio B (ID: ${idNovioB})`);
-                                                        console.log("===========================================================");
-                                                    }
-                                                    
-                                                    // Cerramos la consola recién cuando guardó la boda
-                                                    rl.close();
-                                                });
-                                            });
-                                        });
-                                    });
-
-                                });
-                            });
+                        db.query(sqlNovio, [nuevoIdPersona], (errorNovio) => {
+                            if (errorNovio) {
+                                console.error('Error al guardar el Novio:', errorNovio.message);
+                                lector.close();
+                                return;
+                            }
+                            console.log(`El novio "${nombreApe}" ya está guardado en ambas tablas.\n`);
+                            preguntarSiContinuar(lector);
                         });
                     });
-
                 });
             });
         });
     });
 };
 
-// 3: Ejecutamos la función interactiva al levantar el servidor
-iniciarReunionNovios();
+const registrarBoda = (lector) => {
+    console.log('\n---  REGISTRO DE NUEVA BODA ---');
+    lector.question('  Ingresa FECHA Y HORA (AAAA-MM-DD HH:MM:SS): ', (fechaHoraPlanif) => {
+        lector.question('  Ingresá el PRESUPUESTO ($): ', (presupuesto) => {
+            lector.question('Ingresá la SEÑA ($): ', (seniaBoda) => {
+                lector.question('Ingresá el ESTADO (Planificada, En Proceso, Finalizada): ', (estadoBoda) => {
+                    lector.question('Ingresá el ID del PLANNER asignado: ', (idPlanner) => {
+                        
+                        // Pedimos los novios que van a ir a la tabla intermedia
+                        lector.question('Ingresá el ID del NOVIO 1: ', (idNovio1) => {
+                            lector.question(' Ingresá el ID del NOVIO 2: ', (idNovio2) => {
+
+                                console.log('\n Conectando con mozzafiato...');
+
+                                //Insertar en la tabla boda con tus columnas reales
+                                const sqlBoda = `
+                                    INSERT INTO boda (fechaHoraPlanif, presupuesto, seniaBoda, estadoBoda, idPlanner) 
+                                    VALUES (?, ?, ?, 'Planificada', ?);
+                                `;
+
+                                db.query(sqlBoda, [fechaHoraPlanif, presupuesto, seniaBoda, idPlanner], (errorBoda, resultadoBoda) => {
+                                    if (errorBoda) {
+                                        console.error(' Error al crear la Boda:', errorBoda.message);
+                                        preguntarSiContinuar(lector);
+                                        return;
+                                    }
+                                    // Capturamos el ID que generó automáticamente 
+                                    const nuevoIdBoda = resultadoBoda.insertId;
+                                    console.log(`\n Boda creada con éxito. ID asignado: ${nuevoIdBoda}`);
+
+                                    //Insertar en la tabla intermedia boda_novio
+                                    const sqlBodaNovio = `
+                                        INSERT INTO boda_novio (idBoda, idNovio) 
+                                        VALUES (?, ?), (?, ?);
+                                    `;
+
+                                    db.query(sqlBodaNovio, [nuevoIdBoda, idNovio1, nuevoIdBoda, idNovio2], (errorIntermedia) => {
+                                        if (errorIntermedia) {
+                                            console.error('Error en la tabla intermedia:', errorIntermedia.message);
+                                            preguntarSiContinuar(lector);
+                                            return;
+                                        }
+
+                                        console.log(`\nLa boda N° ${nuevoIdBoda} fue registrada y los novios ${idNovio1} y ${idNovio2} quedaron asociados.`);
+                                        preguntarSiContinuar(lector);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+};
+const registrarServicios = (lector) =>{
+    console.log('\n---  REGISTRO DE NUEVO SERVICIO ---');
+    lector.question('Ingresar nombre de nuevo servicio: ' , (nombre)=> {
+        lector.question('Ingresar telefono :',(telefono)=>{
+            lector.question('ingresar email:',(email)=>{
+                lector.question('Ingresar descripcion del servicio :',(descripcion)=>{
+                    console.log('\n Conectando con mozzafiato...');
+
+                    const sqlBoda = `
+                                    INSERT INTO servicios (nombre, telefono, email, descripcion) 
+                                    VALUES (?, ?, ?, ?);
+                                `;
+
+                                db.query(sqlBoda, [nombre, telefono, email, descripcion,], (errorServicios, resultadoServicios) => {
+                                    if (errorServicios) {
+                                        console.error(' Error al crear el servicio:', errorServicios.message);
+                                        preguntarSiContinuar(lector);
+                                        return;
+                                    }
+                                })
+
+                })
+
+            } )
+        } )
+
+    })
+};  
+
+const preguntarSiContinuar = (lector) => {
+    lector.question('¿Desea realizar otra operación? (S para Si N para Salir y finalizar): ', (respuesta) => {
+        if (respuesta.toUpperCase() === 'S') {
+            lector.close();
+            mostrarMenu(); 
+        } else {
+            console.log('\nFinalizando...');
+            lector.close(); 
+        }
+    });
+};
+//menu principal para elegir entre registrar planner o persona/novio
+const mostrarMenu = () => {
+    const lector = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    console.log('        MENÚ DE MOZZAFIATO         ');
+    console.log(' 1. Crear un nuevo Planner');
+    console.log(' 2. Crear una nueva Persona (Novio/a)');
+    console.log(' 3. Crear una nueva Boda');
+    console.log(' 4. Crear un nuevo servicio');
+    console.log('=======================================');
+    
+    lector.question('Elija una opción 1, 2, 3 o 4): ', (opcion) => {
+        if (opcion === '1') {
+            registrarPlanner(lector); 
+        } else if (opcion === '2') {
+            registrarNuevaPersonaNovio(lector); 
+        } else if (opcion === '3') {
+            registrarBoda(lector);
+        } else if (opcion === '4') {
+            registrarServicios(lector);
+        } else if (opcion == '5'){
+            registrarServicios(lector)
+        }
+        else {
+            console.log('Opción no válida intente de nuevo.');
+            lector.close();
+        }
+    });
+};
+
+
+setTimeout(mostrarMenu, 3000);
 
 // 4: Escuchamos nuestra app
 const PORT = 3001

@@ -22,34 +22,12 @@
                 <h1>Panel Global del Organizador</h1>
             </div>
             <!-- Abre el modal usando la ID en el href -->
-            <a href="#modal-agendar" class="btn-primary">➕ Agendar Nueva Boda</a>
-            <a href="#modal-agendar" class="btn-primary">➕ Agendar Nuevo Planner</a>
-            <a href="#modal-agendar" class="btn-primary">➕ Agendar Nueva Persona</a>
+            <a href="registrarBoda.html" class="btn-primary">➕ Agendar Nueva Boda</a>
+            <a href="registroPlanner.html" class="btn-primary">➕ Agendar Nuevo Planner</a>
+            <a href="RegistroPersona.html" class="btn-primary">➕ Agendar Nueva Persona</a>
         </header>
 
       
     </main>
-
-    <!-- VENTANA EMERGENTE PARA REGISTRAR  LA BODA (habria que ver los datos) -->
-    <div id="modal-agendar" class="modal">
-        <div class="modal-content">
-            <a href="#" class="modal-close">&times;</a>
-            <h2>Agendar Nueva Boda</h2>
-            <form>
-                <label>Nombre de la Pareja:</label>
-                <input type="text" placeholder="Ej: Valentina & Diego" required>
-                <label>Fecha y Hora:</label>
-                <input type="datetime-local" required>
-                <label>Presupuesto Estimado:</label>
-                <input type="text" placeholder="Monto" required>
-                <label>Telefono:</label>
-                <input type="text" placeholder="Ej: 3418901234" required>
-                <label>Planner Asignado:</label>
-                <select disabled><option> (Tú - Autoverificado)</option></select>
-                
-                <a href="panel-principal.html" class="btn-ingresar">Guardar y Crear Evento</a>
-            </form>
-        </div>
-    </div>
 </body>
 </html>
