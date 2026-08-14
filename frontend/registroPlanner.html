@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mozzafiato - Registro Planner</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 40px; 
+            background-color: #f9f9f9; 
+            color: #333;
+        }
+        .tarjeta { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            max-width: 400px; 
+            margin: 0 auto; 
+        }
+        h2 { text-align: center; color: #d4a373; }
+        label { 
+            display: block; 
+            margin-top: 15px; 
+            font-weight: bold; 
+            font-size: 14px; 
+        }
+        input { 
+            padding: 10px; 
+            margin-top: 5px; 
+            width: 100%; 
+            box-sizing: border-box; 
+            border: 1px solid #ccc; 
+            border-radius: 5px;
+        }
+        button { 
+            background-color: #d4a373; 
+            color: white; 
+            border: none; 
+            padding: 12px;
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover { background-color: #b0865d; }
+        .volver {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tarjeta">
+        <h2>Agregar Planner</h2>
+        
+        <form id="formularioPlanner">
+            <label for="nombre">Nombre del nuevo PLANNER:</label>
+            <input type="text" name="nombre" placeholder="Ej: Geraldine..." required>
+            
+            <label for="usuario">Usuario del nuevo PLANNER:</label>
+            <input type="text" name="usuario" placeholder="Ej: geraldine..." required>
+            
+            <label for="contrasenia">Contraseña del nuevo PLANNER:</label>
+            <input type="password" name="contrasenia" placeholder="Ej: ********" required>
+            
+            <button type="submit">Guardar datos</button>
+        </form>
+
+        <!-- Botoncito para volver al menú de tu compañera -->
+        <a href="panelPrincipal.html" class="volver">← Volver al Panel Principal</a>
+    </div>
+
+    <!-- Script que conecta esta pantalla con tu Backend -->
+    <script src="script.js"></script>
+</body>
+</html>
