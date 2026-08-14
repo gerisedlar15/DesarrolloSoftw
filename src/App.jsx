@@ -1,28 +1,40 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import RegistroPersona from "./components/RegistroPersona";
+import { Routes, Route, Link } from 'react-router-dom';
+// Importamos tus dos pantallas
+import RegistroPersona from "./components/RegistroPersona"; 
+import { ListaPersonas } from "./components/ListaPersonas";
 
-// Componente temporal para el Panel Principal (luego lo pasaremos a su propio archivo)
+// Este es el menú que ves apenas entrás a la página
 function PanelPrincipal() {
   return (
     <div style={{ padding: '40px', fontFamily: 'Arial', textAlign: 'center' }}>
       <h2>Panel Principal - Mozzafiato</h2>
-      <Link to="/registro" style={{ color: '#d4a373', textDecoration: 'none', fontWeight: 'bold' }}>
-        Ir a Agregar Persona →
-      </Link>
+      
+      {/* Botón para ir al formulario de agregar */}
+      <div style={{ marginBottom: '30px' }}>
+        <Link to="/registro" style={{ color: '#d4a373', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
+          ✚ Ir a Agregar Persona
+        </Link>
+      </div>
+
+      <hr style={{ margin: '40px 0' }} />
+
+      {/* Botón para ir a la lista de eliminar */}
+      <div>
+        <Link to="/lista" style={{ color: 'red', textDecoration: 'none', fontSize: '20px', fontWeight: 'bold' }}>
+          Ver lista para eliminar
+        </Link>
+      </div>
     </div>
   );
 }
 
+// Este es el "mapa" que conecta las URLs con las pantallas
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Cuando la URL esté vacía (/), muestra el Panel Principal */}
-        <Route path="/" element={<PanelPrincipal />} />
-        
-        {/* Cuando la URL sea /registro, muestra tu formulario */}
-        <Route path="/registro" element={<RegistroPersona />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<PanelPrincipal />} />
+      <Route path="/registro" element={<RegistroPersona />} />
+      <Route path="/lista" element={<ListaPersonas />} />
+    </Routes>
   );
 }

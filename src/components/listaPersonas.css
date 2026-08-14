@@ -1,0 +1,41 @@
+.contenedor-lista {
+  padding: 40px;
+  font-family: Arial, sans-serif;
+}
+
+.link-volver {
+  color: blue;
+  text-decoration: none;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.tabla-personas {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.tabla-personas th,
+.tabla-personas td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.tabla-personas thead tr {
+  background-color: #f4f4f4;
+}
+
+.btn-eliminar {
+  background-color: rgb(143, 100, 100);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-eliminar:hover {
+  background-color: rgb(187, 166, 166);
+}
