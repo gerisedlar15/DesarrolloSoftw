@@ -64,16 +64,16 @@ const [mensajeExito, setMensajeExito] = useState('');
       {mensajeExito && <div className="mensaje-exito">{mensajeExito}</div>} 
       <form onSubmit={handleSubmit}>
         <label htmlFor="nombreApe">Nombre de la Persona:</label>
-        <input type="text" id="nombreApe" name="nombreApe" required value={formData.nombreApe} onChange={handleChange} />
+        <input type="text" id="nombreApe" name="nombreApe" required value={formData.nombreApe} onChange={handleChange} placeholder="EJ: Geraldine, Lourdes, ..." />
 
         <label htmlFor="telefono">Teléfono de la Persona:</label>
-        <input type="tel" id="telefono" name="telefono" required value={formData.telefono} onChange={handleChange} />
+        <input type="tel" id="telefono" name="telefono" required value={formData.telefono} onChange={handleChange} placeholder="EJ: 123-456-7890" />
 
         <label htmlFor="correoElect">Correo electrónico de la Persona</label>
-        <input type="email" id="correoElect" name="correoElect" required value={formData.correoElect} onChange={handleChange} />
+        <input type="email" id="correoElect" name="correoElect" required value={formData.correoElect} onChange={handleChange} placeholder="EJ: ejemplo@correo.com" />
 
         <label htmlFor="observacion">Observación de la Persona</label>
-        <input type="text" id="observacion" name="observacion" required value={formData.observacion} onChange={handleChange} />
+        <input type="text" id="observacion" name="observacion" required value={formData.observacion} onChange={handleChange} placeholder="EJ: vegano, celiaco, ..." />
       <label htmlFor="rol">Rol de la Persona:</label>
         <select 
           id="rol" 
@@ -88,7 +88,9 @@ const [mensajeExito, setMensajeExito] = useState('');
         </select>
         <button type="submit">Guardar datos</button>
       </form>
-     <Link to="/" className="volver">← Volver al Panel Principal</Link>
+      <Link to="/" className="volver">
+      ← Volver al Panel Principal
+      </Link>
     </div>
   );
 }

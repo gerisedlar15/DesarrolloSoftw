@@ -7,6 +7,27 @@
   border: 2px solid transparent;
   transition: border-color 0.3s;
   margin-bottom: 24px;
+}
+
+.contenedor-botones {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra ambos botones horizontalmente */
+  gap: 12px;           /* Espacio exacto entre ambos botones */
+}
+
+.boton-panel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Mantiene la alineación del icono + y texto */
+  width: 270px;      /* Ancho fijo para que midan exactamente lo mismo */
+  padding: 10px 16px;
+  box-sizing: border-box;
+  color: #d4a373;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+}
 
   &:hover {
     border-color: var(--accent-border);
@@ -15,7 +36,7 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-}
+
 
 .hero {
   position: relative;
@@ -63,6 +84,15 @@
   place-content: center;
   place-items: center;
   flex-grow: 1;
+
+  a {
+      display: flex;
+      justify-content: flex-start; /* Mantiene el signo + y el texto alineados */
+      width: 260px ;                 /* FUERZA a que ambos midan 260px de ancho */
+      box-sizing: border-box;       /* Evita que el padding deforme las medidas */
+      text-align: left;
+    }
+
 
   @media (max-width: 1024px) {
     padding: 32px 20px 24px;

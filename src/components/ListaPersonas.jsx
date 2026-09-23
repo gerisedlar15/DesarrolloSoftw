@@ -46,10 +46,7 @@ export function ListaPersonas() {
         ← Volver al Panel Principal
       </Link>
 
-      <Link to="/" className="link-eliminar">
-        Eliminar Persona
-      </Link>
-
+  
       <table className="tabla-personas">
         <thead>
           <tr>
@@ -61,22 +58,38 @@ export function ListaPersonas() {
         </thead>
         
         {/* ACÁ ESTÁ EL CAMBIO: El sello automático (.map) */}
-        <tbody>
-          {personas.map((persona) => (
-            <tr key={persona.idPerso}> {/* key es obligatorio: es el DNI de la fila para que React no se pierda */}
-              <td>{persona.nombreApe}</td>
-              <td>{persona.telefono}</td>
-              <td>{persona.correoElect}</td>
-              <td>
-                <button 
-                  onClick={() => manejarEliminacion(persona.idPerso)} 
-                  className="btn-eliminar"
-                >
-                  Eliminar
-                </button>
+       <tbody>
+          {personas.length > 0 ? (
+            personas.map((persona) => (
+              <tr key={persona.idPerso}>
+                <td>{persona.nombreApe}</td>
+                <td>{persona.telefono}</td>
+                <td>{persona.correoElect}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <button 
+                      onClick={() => console.log('Modificar ID:', persona.idPerso)} 
+                      className="btn-modificar"
+                    >
+                      Modificar
+                    </button>
+                    <button 
+                      onClick={() => manejarEliminacion(persona.idPerso)} 
+                      className="btn-deshabilitar"
+                    >
+                      Deshabilitar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+            ) : (
+            <tr>
+              <td colSpan="4" style={{ textAlign: 'center', padding: '15px' }}>
+                No hay personas registradas o cargando datos...
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
 
       </table>
