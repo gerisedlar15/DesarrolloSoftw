@@ -1,0 +1,14 @@
+.tarjeta {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+h2 { text-align: center; color: #d4a373; }
+label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
+input { padding: 10px; margin-top: 5px; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+button { background-color: #d4a373; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; border-radius: 5px; font-size: 16px; }
+.volver { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #666; font-size: 14px; }
