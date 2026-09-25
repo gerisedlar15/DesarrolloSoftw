@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import RegistroPersona from "./components/RegistroPersona"; 
 import { ListaPersonas } from "./components/ListaPersonas";
 import RegistroServicio from './components/RegistroServicio';
+import RegistroPlanner from './components/RegistroPlanner';
 
 
 // Este es el menú que ves apenas entrás a la página
@@ -20,6 +21,11 @@ function PanelPrincipal() {
       <div className="contenedor-botones">
         <Link to="/agregar-servicio" className="boton-panel" style={{ color: '#d4a373', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold' }} >
           ✚  Ir a Agregar Servicio
+        </Link>
+      </div>
+      <div className="contenedor-botones">
+        <Link to="/agregar-planner" className="boton-panel" style={{ color: '#d4a373', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold' }} >
+          ✚  Ir a Agregar Planner
         </Link>
       </div>
 
@@ -43,6 +49,7 @@ export default function App() {
       <Route path="/registro" element={<RegistroPersona />} />
       <Route path="/lista" element={<ListaPersonas />} />
       <Route path="/agregar-servicio" element={<RegistroServicio />} />
+      <Route path="/agregar-planner" element={<RegistroPlanner />} />
     </Routes>
   );
 }
