@@ -20,4 +20,10 @@ AGREGAR CAMBIOS
 1) git add .
 2) git commit -m "mensaje de guardado"
 3) git push origin main
-   
+
+ TRAER CAMBIOS
+ git pull
+PRENDER EL FRONT
+PS C:\Users\Educacion\Desktop\DSW\DesarrolloSoftw\frontend-mozzafiato> npm run dev
+PRENDER  EL BACK
+PS C:\Users\Educacion\Desktop\DSW\DesarrolloSoftw\frontend-mozzafiato> npm run dev
