@@ -8,7 +8,7 @@ const crear = async (req, res) => {
         // En la consulta SQL usamos "nombre" con minúscula para tu tabla,
         // pero le pasamos el valor de la variable "Nombre"
         await db.query(
-            'INSERT INTO servicio (telefono, email, descripcion, nombre) VALUES (?, ?, ?, ?)', 
+            'INSERT INTO servicios (telefono, email, descripcion, nombre) VALUES (?, ?, ?, ?)', 
             [telefono, email, descripcion, Nombre]
         );
         

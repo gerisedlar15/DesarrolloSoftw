@@ -1,19 +1,16 @@
 import { useState } from 'react';
-import './RegistroPlanner.css'; // O crea un './RegistroPlaner.css' si prefieres separar los estilos
+import './RegistroPlanner.css';
 import { Link } from 'react-router-dom';
 
 export default function RegistroPlanner() {
-  // Memoria de la pantalla: guarda todo lo que el usuario escribe en los inputs del planner
   const [formData, setFormData] = useState({
     nombre: '',
     usuario: '',
-    contraseña: ''
+    contrasenia: '' 
   });
 
-  // Memoria exclusiva para el cartel de éxito
   const [mensajeExito, setMensajeExito] = useState('');
 
-  // Cada vez que el usuario escribe algo en un input, se ejecuta esta función
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -23,39 +20,32 @@ export default function RegistroPlanner() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Intentando enviar datos del planner...");
     
     try {
-      // Apunta al backend en JavaScript que guardará el planner
       const respuesta = await fetch('http://localhost:3000/planners', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData) 
       });
 
       if (respuesta.ok) {
-        // Guardamos el mensaje de éxito
-        setMensajeExito("¡Planner guardado con éxito!");
-
-        // Vaciamos los campos del formulario
-        setFormData({
-          nombre: '',
-          usuario: '',
-          contraseña: ''
-        });
-
-        // Ocultamos el mensaje de éxito a los 3 segundos
+        setMensajeExito("¡Planner guardado con éxito!"); 
+        setFormData({ nombre: '', usuario: '', contrasenia: '' });
+        
         setTimeout(() => {
           setMensajeExito('');
         }, 3000);
       } else {
-        alert("Hubo un error en el servidor al guardar el planner.");
+        // Atrapamos el error exacto que manda el servidor y lo mostramos
+        const errorTexto = await respuesta.text();
+        alert(`Error del servidor. Código: ${respuesta.status}. Detalle: ${errorTexto}`);
       }
 
     } catch (error) {
       console.error("Error de conexión:", error);
+      alert("Node.js está apagado o hay un problema de red.");
     }
   };
 
@@ -66,37 +56,34 @@ export default function RegistroPlanner() {
       {mensajeExito && <div className="mensaje-exito">{mensajeExito}</div>}
 
       <form onSubmit={handleSubmit}>
-        <label htmlFor="nombre">Nombre:</label>
+        <label>Nombre:</label>
         <input 
           type="text" 
-          id="nombre" 
           name="nombre" 
           required 
           value={formData.nombre} 
           onChange={handleChange} 
-          placeholder="EJ: Gerladine, Lourdes, ..."
+          placeholder="Ej: Geraldine..."
         />
 
-        <label htmlFor="usuario">Usuario:</label>
+        <label>Usuario:</label>
         <input 
           type="text" 
-          id="usuario" 
           name="usuario" 
           required 
           value={formData.usuario} 
           onChange={handleChange} 
-          placeholder="EJ: Gerladine, Lourdes, ..."
+          placeholder="Usuario..."
         />
 
-        <label htmlFor="contraseña">Contraseña:</label>
+        <label>Contraseña:</label>
         <input 
           type="password" 
-          id="contraseña" 
-          name="contraseña" 
+          name="contrasenia" // <-- Cambiado a contrasenia
           required 
-          value={formData.contraseña} 
+          value={formData.contrasenia} // <-- Cambiado a contrasenia
           onChange={handleChange} 
-          placeholder="Contraseña segura..."
+          placeholder="Contraseña..."
         />
 
         <button type="submit">Guardar planner</button>
