@@ -3,7 +3,7 @@ import RegistroPersona from "./components/RegistroPersona";
 import { ListaPersonas } from "./components/ListaPersonas";
 import ModificarPersona from "./components/modificarPersona"; // <-- ESTO FALTABA
 import RegistroServicio from './components/RegistroServicio';
-
+import RegistroPlanner from './components/RegistroPlanner'; // <-- ESTO FALTABA
 function PanelPrincipal() {
   return (
     <div style={{ padding: '40px', fontFamily: 'Arial', textAlign: 'center' }}>
@@ -17,7 +17,17 @@ function PanelPrincipal() {
         <Link to="/registro-servicio" style={{ width: '270px', padding: '10px', color: '#d4a373', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold', border: '1px solid #d4a373', borderRadius: '5px' }} >
           ✚ Ir a Agregar Servicio
         </Link>
+        
       </div>
+      <div className= "contenedor-botones"></div>
+      <Link to ="/registro-planner" style={{ width: '270px', padding: '10px', color: '#d4a373', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold', border: '1px solid #d4a373', borderRadius: '5px' }} >
+          ✚ Ir a Agregar Planner
+        </Link> 
+
+
+      
+      <div></div>
+      
 
       <hr style={{ margin: '40px 0' }} />
 
@@ -38,6 +48,7 @@ export default function App() {
       <Route path="/lista" element={<ListaPersonas />} />
       <Route path="/editar/:id" element={<ModificarPersona />} />
       <Route path="/registro-servicio" element={<RegistroServicio />} />
+      <Route path="/registro-planner" element={<RegistroPlanner />} />
     </Routes>
   );
 }
