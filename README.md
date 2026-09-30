@@ -27,3 +27,22 @@ PRENDER EL FRONT
 PS C:\Users\Educacion\Desktop\DSW\DesarrolloSoftw\frontend-mozzafiato> npm run dev
 PRENDER  EL BACK
 PS C:\Users\Educacion\Desktop\DSW\DesarrolloSoftw\frontend-mozzafiato> npm run dev
+
+COMO CORRER LA AP!!!!!!!!!!!
+Base de datos: Importar el archivo mozzafiato.sql en phpMyAdmin (asegurarse de que el usuario de BD en el código coincida con el tuyo local).
+
+Backend (Node.js):
+
+Abrir la terminal en la carpeta del backend.
+
+Ejecutar npm install (para instalar dependencias).
+
+Ejecutar node server.js (corre en el puerto 3000).
+
+Frontend (React):
+
+Abrir otra terminal en la carpeta del frontend.
+
+Ejecutar npm install.
+
+Ejecutar npm run dev.
