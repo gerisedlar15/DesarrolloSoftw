@@ -38,9 +38,13 @@ export default function RegistroPlanner() {
           setMensajeExito('');
         }, 3000);
       } else {
-        // Atrapamos el error exacto que manda el servidor y lo mostramos
         const errorTexto = await respuesta.text();
-        alert(`Error del servidor. Código: ${respuesta.status}. Detalle: ${errorTexto}`);
+        let mensaje = errorTexto;
+        try {
+          const jsonError = JSON.parse(errorTexto);
+          if (jsonError.error) mensaje = jsonError.error;
+        } catch (_) {}
+        alert(`Error al guardar planner: ${mensaje}`);
       }
 
     } catch (error) {

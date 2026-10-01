@@ -1,9 +1,10 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import RegistroPersona from "./components/RegistroPersona";
 import { ListaPersonas } from "./components/ListaPersonas";
-import ModificarPersona from "./components/modificarPersona"; // <-- ESTO FALTABA
+import ModificarPersona from "./components/modificarPersona"; 
 import RegistroServicio from './components/RegistroServicio';
-import RegistroPlanner from './components/RegistroPlanner'; // <-- ESTO FALTABA
+import RegistroPlanner from './components/RegistroPlanner'; 
+import RegistroBoda from './components/RegistroBoda';
 function PanelPrincipal() {
   return (
     <div style={{ padding: '40px', fontFamily: 'Arial', textAlign: 'center' }}>
@@ -23,10 +24,12 @@ function PanelPrincipal() {
       <Link to ="/registro-planner" style={{ width: '270px', padding: '10px', color: '#d4a373', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold', border: '1px solid #d4a373', borderRadius: '5px' }} >
           ✚ Ir a Agregar Planner
         </Link> 
-
-
+      <div>
+        <Link to="/agregar-boda" style={{ width: '270px', padding: '10px', color: '#d4a373', textDecoration: 'none', fontSize: '18px', fontWeight: 'bold', border: '1px solid #d4a373', borderRadius: '5px' }}>
+          ✚ Ir a Agregar Boda
+        </Link>
+      </div>
       
-      <div></div>
       
 
       <hr style={{ margin: '40px 0' }} />
@@ -49,6 +52,7 @@ export default function App() {
       <Route path="/editar/:id" element={<ModificarPersona />} />
       <Route path="/registro-servicio" element={<RegistroServicio />} />
       <Route path="/registro-planner" element={<RegistroPlanner />} />
+      <Route path="/agregar-boda" element={<RegistroBoda />} />
     </Routes>
   );
 }

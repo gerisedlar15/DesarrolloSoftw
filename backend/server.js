@@ -4,7 +4,8 @@ const cors = require('cors');
 // Importamos las rutas
 const personaRoutes = require('./routes/personaRoutes'); 
 const servicioRoutes = require('./routes/servicioRoutes');
-const plannerRoutes = require('./routes/plannerRoutes'); // <-- Acá traemos el planner
+const plannerRoutes = require('./routes/plannerRoutes'); 
+const bodaRoutes = require('./routes/bodaRoutes'); 
 
 const app = express();
 const port = 3000;
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/personas', personaRoutes);
 app.use('/servicios', servicioRoutes);
 app.use('/planners', plannerRoutes); // <-- Acá habilitamos /planners
+app.use('/bodas', bodaRoutes); // <-- Acá habilitamos /bodas
 
 app.listen(port, () => {
     console.log(`Servidor de Mozzafiato corriendo en http://localhost:${port}`);

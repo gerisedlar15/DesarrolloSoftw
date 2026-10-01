@@ -131,7 +131,7 @@ INSERT INTO `persona` (`idPerso`, `nombreApe`, `telefono`, `correoElect`, `obser
 
 CREATE TABLE `planner` (
   `idPlanner` int(11) NOT NULL,
-  `nombre` varchar(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
   `usuario` varchar(50) NOT NULL,
   `contrasenia` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
