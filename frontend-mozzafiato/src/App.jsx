@@ -1,10 +1,10 @@
 import { Routes, Route, Link } from 'react-router-dom';
 import RegistroPersona from "./components/RegistroPersona";
 import { ListaPersonas } from "./components/ListaPersonas";
-import ModificarPersona from "./components/modificarPersona"; 
 import RegistroServicio from './components/RegistroServicio';
 import RegistroPlanner from './components/RegistroPlanner'; 
 import RegistroBoda from './components/RegistroBoda';
+
 function PanelPrincipal() {
   return (
     <div style={{ padding: '40px', fontFamily: 'Arial', textAlign: 'center' }}>
@@ -30,8 +30,6 @@ function PanelPrincipal() {
         </Link>
       </div>
       
-      
-
       <hr style={{ margin: '40px 0' }} />
 
       <div>
@@ -49,7 +47,6 @@ export default function App() {
       <Route path="/" element={<PanelPrincipal />} />
       <Route path="/registro" element={<RegistroPersona />} />
       <Route path="/lista" element={<ListaPersonas />} />
-      <Route path="/editar/:id" element={<ModificarPersona />} />
       <Route path="/registro-servicio" element={<RegistroServicio />} />
       <Route path="/registro-planner" element={<RegistroPlanner />} />
       <Route path="/agregar-boda" element={<RegistroBoda />} />
