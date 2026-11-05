@@ -1,92 +1,108 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import './modificarPersona.css'; 
+import { useParams, useNavigate } from 'react-router-dom';
+import './RegistroPersona.css';
 
-export function ModificarPersona() { 
-  const { id } = useParams(); 
-  const navigate = useNavigate();
-  
-  const [formData, setFormData] = useState({
-    nombreApe: '',
-    telefono: '',
-    correoElect: '',
-    observacion: '',
-    rol: 'Novio' 
-  });
+export default function ModificarPersona() {
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  // Carga los datos actuales al entrar a la pantalla
-  useEffect(() => {
-    fetch('http://localhost:3000/personas')
-      .then(res => res.json())
-      .then(datos => {
-        const personaActual = datos.find(p => p.idPerso === Number(id));
-        if (personaActual) {
-          setFormData(personaActual);
+    const [persona, setPersona] = useState({
+        nombreApe: '',
+        telefono: '',
+        correoElect: '',
+        observacion: '',
+        rol: 'Invitado'
+    });
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/personas/${id}`)
+            .then(respuesta => {
+                if (!respuesta.ok) throw new Error("No se pudo cargar la persona");
+                return respuesta.json();
+            })
+            .then(datos => {
+                setPersona({
+                    nombreApe: datos.nombreApe || '',
+                    telefono: datos.telefono || '',
+                    correoElect: datos.correoElect || '',
+                    observacion: datos.observacion || '',
+                    rol: datos.rol || 'Invitado'
+                });
+            })
+            .catch(err => {
+                console.error("Error al traer persona:", err);
+                setError(err.message);
+            })
+            .finally(() => setCargando(false));
+    }, [id]);
+
+    const handleChange = (e) => {
+        setPersona({ ...persona, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault(); 
+        setError('');
+
+        try {
+            const respuesta = await fetch(`http://localhost:3000/personas/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(persona)
+            });
+
+            const data = await respuesta.json();
+            if (!respuesta.ok) {
+                throw new Error(data.error || "Error al actualizar");
+            }
+
+            navigate('/lista');
+        } catch (err) {
+            console.error("Error al modificar:", err);
+            setError(err.message);
         }
-      })
-      .catch(error => console.error("Error al cargar datos:", error));
-  }, [id]);
+    };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const respuesta = await fetch(`http://localhost:3000/personas/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      if (respuesta.ok) {
-        alert("¡Persona modificada con éxito!");
-        navigate('/lista'); // <-- AHORA SÍ va a tu ruta correcta
-      } else {
-        alert("Error al guardar los cambios.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
+    if (cargando) {
+        return <div style={{ padding: '40px', textAlign: 'center' }}>Cargando datos...</div>;
     }
-  };
 
-  return (
-    <div className="tarjeta">
-      <h2>Modificar Persona</h2>
-      
-      <form onSubmit={handleSubmit}>
-        <label>Nombre y Apellido:</label>
-        <input type="text" name="nombreApe" value={formData.nombreApe} onChange={handleChange} required />
+    return (
+        <div className="contenedor-registro">
+            <div className="tarjeta">
+                <h2>Modificar Persona #{id}</h2>
+                {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="nombreApe">Nombre de la Persona *</label>
+                    <input type="text" id="nombreApe" name="nombreApe" value={persona.nombreApe} onChange={handleChange} required />
+                    
+                    <label htmlFor="rol">Rol:</label>
+                    <select
+                        id="rol"
+                        name="rol"
+                        value={persona.rol}
+                        onChange={handleChange}
+                        style={{ padding: '10px', marginTop: '5px', width: '100%', marginBottom: '15px', borderRadius: '5px', border: '1px solid #ccc' }}
+                    >
+                        <option value="Invitado">Invitado</option>
+                        <option value="Novio">Novio</option>
+                    </select>
 
-        <label>Teléfono:</label>
-        <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} />
+                    <label htmlFor="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" value={persona.telefono} onChange={handleChange} />
+                    
+                    <label htmlFor="correoElect">Correo electrónico:</label>
+                    <input type="email" id="correoElect" name="correoElect" value={persona.correoElect} onChange={handleChange} />
+                    
+                    <label htmlFor="observacion">Observación:</label>
+                    <input type="text" id="observacion" name="observacion" value={persona.observacion} onChange={handleChange} />
 
-        <label>Correo Electrónico:</label>
-        <input type="email" name="correoElect" value={formData.correoElect} onChange={handleChange} />
-
-        <label>Observación:</label>
-        <input type="text" name="observacion" value={formData.observacion} onChange={handleChange} />
-
-        <label>Rol:</label>
-        <select name="rol" value={formData.rol} onChange={handleChange}>
-          <option value="Novio">Novio</option>
-          <option value="Invitado">Invitado</option>
-          <option value="Proveedor">Proveedor</option>
-          <option value="Planner">Planner</option>
-        </select>
-
-        <button 
-          type="submit" 
-          style={{ backgroundColor: '#d4a373', color: 'white', padding: '10px 15px', border: 'none', cursor: 'pointer', marginTop: '15px' }}
-        >
-          Guardar Cambios
-        </button>
-      </form>
-      
-      <br />
-      <Link to="/lista">← Cancelar y volver</Link>
-    </div>
-  );
+                    <button type="submit">Actualizar datos</button>
+                </form>
+                <button className="volver" onClick={() => navigate('/lista')}>← Volver a la lista</button>
+            </div>
+        </div>
+    );
 }

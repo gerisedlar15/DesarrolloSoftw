@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-09-2026 a las 22:30:22
+-- Tiempo de generación: 04-11-2026 a las 02:26:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,7 +43,15 @@ CREATE TABLE `boda` (
 INSERT INTO `boda` (`idBoda`, `fechaHoraPlanif`, `presupuesto`, `seniaBoda`, `estadoBoda`, `idPlanner`) VALUES
 (3, '2026-10-10 20:30:00', 6500000.00, 800000.00, 'Planificada', 2),
 (5, '2026-07-09 00:00:00', 5000000.00, 10000.00, 'Planificada', 2),
-(6, '2027-04-03 00:00:00', 7000.00, 79.00, 'Planificada', 2);
+(6, '2027-04-03 00:00:00', 7000.00, 79.00, 'Planificada', 2),
+(7, '2026-09-28 21:23:00', 6777.00, 8887.00, 'Planificada', 2),
+(8, '2026-09-28 21:39:00', 32.00, -5.00, 'Planificada', 2),
+(9, '2026-09-28 21:46:00', 8.00, 9.00, 'Planificada', 2),
+(10, '2026-09-29 21:46:00', 8888.00, 90000.00, 'Planificada', 2),
+(11, '2026-09-29 21:46:00', 8888.00, 90000.00, 'Planificada', 2),
+(12, '2026-09-03 22:06:00', 7777.00, 78787.00, 'Planificada', 2),
+(13, '2026-10-04 16:35:00', 15000.00, 13400.00, 'Planificada', 2),
+(14, '2026-10-04 16:36:00', 1200.00, 1300.00, 'Planificada', 2);
 
 -- --------------------------------------------------------
 
@@ -56,6 +64,16 @@ CREATE TABLE `boda_novio` (
   `idNovio` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `boda_novio`
+--
+
+INSERT INTO `boda_novio` (`idBoda`, `idNovio`) VALUES
+(11, 6),
+(12, 6),
+(13, 6),
+(14, 6);
+
 -- --------------------------------------------------------
 
 --
@@ -66,6 +84,16 @@ CREATE TABLE `boda_servicios` (
   `idServicios` int(11) NOT NULL,
   `idBoda` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `boda_servicios`
+--
+
+INSERT INTO `boda_servicios` (`idServicios`, `idBoda`) VALUES
+(2, 12),
+(1, 12),
+(1, 14),
+(2, 14);
 
 -- --------------------------------------------------------
 
@@ -94,9 +122,7 @@ CREATE TABLE `novio` (
 --
 
 INSERT INTO `novio` (`idNovio`) VALUES
-(5),
-(6),
-(7);
+(6);
 
 -- --------------------------------------------------------
 
@@ -118,17 +144,11 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`idPerso`, `nombreApe`, `telefono`, `correoElect`, `observacion`, `rol`) VALUES
-(5, 'Sherazade', '45632785', 'sheras@gmail.com', 'nada', 'Novio'),
 (6, 'Geraldine', '3401653728', 'geri@gmail.com', 'carnivora', 'Novio'),
-(7, 'Ftisona', '3402643052', 'geajhejahj@gmail.com', '-', 'Novio'),
-(8, 'lol', '3827182184', 'gerisedlar15@gmail.com', 'sadas', ''),
-(9, 'fhf', '466565576', 'gerisedlar15@gmail.com', 'hfhhggg', ''),
-(10, 'ada', '2738127821', 'gerisedlar15@gmail.com', 'veganito', 'Invitado'),
-(11, 'lol', '3423', 'gerisedlar15@gmail.com', 'veganito', 'Invitado'),
 (12, 'Pamela ', '3401522557', 'pameterreno@hotmail.com', '-', 'Invitado'),
-(14, 'ghhjh', '87665543', 'gerisedlar15@gmail.com', 'sadas', 'Novio'),
 (15, 'asdraaa', '21827741672', 'gerisedlar15@gmail.com', 'veganito', 'Invitado'),
-(16, 'lolhgfgt', '123456', 'gerisedlar15@gmail.com', 'veganito', 'Invitado');
+(16, 'lolhgfgt', '123456', 'gerisedlar15@gmail.com', 'veganito', 'Invitado'),
+(17, 'lola', '3827182184', 'gerisedlar15@gmail.com', 'sadas', 'Novio');
 
 -- --------------------------------------------------------
 
@@ -152,7 +172,10 @@ INSERT INTO `planner` (`idPlanner`, `nombre`, `usuario`, `contrasenia`) VALUES
 (3, 'Lourdes Ose', '', ''),
 (14, 'marcela', 'marcelita1234', '1234'),
 (15, 'marcela', 'marcelongui1234', '124'),
-(16, 'marcel', 'kWFJAS', 'JSBAJBF');
+(16, 'marcel', 'kWFJAS', 'JSBAJBF'),
+(18, 'aaaaaaaaaaaaaaaaaaaaaa', 'aaaaaaaaaaaaaaa', 'dd'),
+(21, 'locurita', 'mix123', '12345'),
+(22, 'delfi', 'delfinita', '123456');
 
 -- --------------------------------------------------------
 
@@ -173,7 +196,9 @@ CREATE TABLE `servicios` (
 --
 
 INSERT INTO `servicios` (`idServicio`, `telefono`, `email`, `descripcion`, `nombre`) VALUES
-(1, '3401653076', 'bebidad@gmail.com', 'cocaaaaaaaaaaaa', 'Bebida');
+(1, '3401653076', 'bebidad@gmail.com', 'cocaaaaaaaaaaaa', 'Bebida'),
+(2, '3827182184', 'gerisedlar15@gmail.c', 'ggfgfg', 'nmasnma'),
+(3, '123456', 'gerisedlar15@gmail.c', 'sanguchito', 'catering de comida');
 
 --
 -- Índices para tablas volcadas
@@ -232,25 +257,25 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT de la tabla `boda`
 --
 ALTER TABLE `boda`
-  MODIFY `idBoda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idBoda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `idPerso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `idPerso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `planner`
 --
 ALTER TABLE `planner`
-  MODIFY `idPlanner` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `idPlanner` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `idServicio` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idServicio` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas

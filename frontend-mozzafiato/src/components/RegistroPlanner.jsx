@@ -43,7 +43,9 @@ export default function RegistroPlanner() {
         try {
           const jsonError = JSON.parse(errorTexto);
           if (jsonError.error) mensaje = jsonError.error;
-        } catch (_) {}
+        } catch {
+          // Si no es JSON se usa el texto original
+        }
         alert(`Error al guardar planner: ${mensaje}`);
       }
 

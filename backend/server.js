@@ -13,11 +13,18 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// Conectamos las rutas
+// Conectamos las rutas (admitiendo tanto formato directo como con prefijo /api)
 app.use('/personas', personaRoutes);
+app.use('/api/personas', personaRoutes);
+
 app.use('/servicios', servicioRoutes);
-app.use('/planners', plannerRoutes); // <-- Acá habilitamos /planners
-app.use('/bodas', bodaRoutes); // <-- Acá habilitamos /bodas
+app.use('/api/servicios', servicioRoutes);
+
+app.use('/planners', plannerRoutes);
+app.use('/api/planners', plannerRoutes);
+
+app.use('/bodas', bodaRoutes);
+app.use('/api/bodas', bodaRoutes);
 
 app.listen(port, () => {
     console.log(`Servidor de Mozzafiato corriendo en http://localhost:${port}`);
