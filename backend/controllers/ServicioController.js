@@ -27,15 +27,15 @@ const obtenerPorId = async (req, res) => {
 const crear = async (req, res) => {
     try {
         const nombre = req.body.nombre || req.body.Nombre;
-        const { telefono, email, descripcion } = req.body;
+        const { telefono, email, descripcion, precio } = req.body;
 
         if (!nombre || !nombre.trim()) {
             return res.status(400).json({ error: "El nombre del servicio es obligatorio" });
         }
         
         const [resultado] = await db.query(
-            'INSERT INTO servicios (telefono, email, descripcion, nombre) VALUES (?, ?, ?, ?)', 
-            [telefono || '', email || '', descripcion || '', nombre.trim()]
+            'INSERT INTO servicios (telefono, email, descripcion, nombre, precio) VALUES (?, ?, ?, ?, ?)', 
+            [telefono || '', email || '', descripcion || '', nombre.trim(), Number(precio) || 0]
         );
         
         res.status(201).json({
@@ -52,15 +52,15 @@ const actualizar = async (req, res) => {
     try {
         const { id } = req.params;
         const nombre = req.body.nombre || req.body.Nombre;
-        const { telefono, email, descripcion } = req.body;
+        const { telefono, email, descripcion, precio } = req.body;
 
         if (!nombre || !nombre.trim()) {
             return res.status(400).json({ error: "El nombre del servicio es obligatorio" });
         }
 
         const [resultado] = await db.query(
-            'UPDATE servicios SET nombre = ?, descripcion = ?, telefono = ?, email = ? WHERE idServicio = ?',
-            [nombre.trim(), descripcion || '', telefono || '', email || '', id]
+            'UPDATE servicios SET nombre = ?, descripcion = ?, telefono = ?, email = ?, precio = ? WHERE idServicio = ?',
+            [nombre.trim(), descripcion || '', telefono || '', email || '', Number(precio) || 0, id]
         );
 
         if (resultado.affectedRows === 0) {

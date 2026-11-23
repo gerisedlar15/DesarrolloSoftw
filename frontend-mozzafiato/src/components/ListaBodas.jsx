@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import GestionInvitadosModal from './GestionInvitadosModal';
 import './listaBodas.css';
 import './modal.css';
 
@@ -8,9 +9,13 @@ export default function ListaBodas() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
+  // Estado para el modal de gestión de invitados
+  const [bodaInvitados, setBodaInvitados] = useState(null);
+
   // Opciones para los selects del modal
   const [plannersDisponibles, setPlannersDisponibles] = useState([]);
   const [personasDisponibles, setPersonasDisponibles] = useState([]);
+  const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
 
   // Estado para el modal de edición
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -42,7 +47,7 @@ export default function ListaBodas() {
   useEffect(() => {
     cargarBodas();
 
-    // Cargar planners y personas para los dropdowns del modal de edición
+    // Cargar planners, personas y servicios para los dropdowns y checkboxes del modal de edición
     fetch('http://localhost:3000/planners')
       .then(r => r.json())
       .then(d => { if (Array.isArray(d)) setPlannersDisponibles(d); })
@@ -51,6 +56,11 @@ export default function ListaBodas() {
     fetch('http://localhost:3000/personas')
       .then(r => r.json())
       .then(d => { if (Array.isArray(d)) setPersonasDisponibles(d); })
+      .catch(() => {});
+
+    fetch('http://localhost:3000/servicios')
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setServiciosDisponibles(d); })
       .catch(() => {});
   }, []);
 
@@ -115,10 +125,18 @@ export default function ListaBodas() {
     }
   };
 
+  // Helper para verificar rol de novio
+  const esRolNovio = (rol) => {
+    if (!rol) return false;
+    const r = rol.trim().toLowerCase();
+    return r === 'novio' || r === 'novia' || r === 'novios';
+  };
+
   // Abrir modal con datos precargados
   const abrirModalEditar = (boda) => {
     const novio1 = (boda.novios && boda.novios[0]) ? boda.novios[0].idPerso : '';
     const novio2 = (boda.novios && boda.novios[1]) ? boda.novios[1].idPerso : '';
+    const serviciosIds = Array.isArray(boda.servicios) ? boda.servicios.map(s => s.idServicio) : [];
 
     setBodaEditando({
       idBoda: boda.idBoda,
@@ -128,7 +146,8 @@ export default function ListaBodas() {
       estadoBoda: boda.estadoBoda || 'Planificada',
       idPlanner: boda.idPlanner || '',
       idNovio1: novio1,
-      idNovio2: novio2
+      idNovio2: novio2,
+      serviciosSeleccionados: serviciosIds
     });
     setErrorModal('');
     setModalAbierto(true);
@@ -147,22 +166,53 @@ export default function ListaBodas() {
     });
   };
 
+  const manejarToggleServicioModal = (idServicio) => {
+    setBodaEditando(prev => {
+      const actuales = prev.serviciosSeleccionados || [];
+      const nuevos = actuales.includes(idServicio)
+        ? actuales.filter(id => id !== idServicio)
+        : [...actuales, idServicio];
+      return {
+        ...prev,
+        serviciosSeleccionados: nuevos
+      };
+    });
+  };
+
   // Guardar cambios con PUT y actualizar el estado local de React
   const guardarEdicionBoda = async (e) => {
     e.preventDefault();
-    if (!bodaEditando.fechaHoraPlanif || !bodaEditando.presupuesto || !bodaEditando.idPlanner) {
+    if (!bodaEditando.fechaHoraPlanif || bodaEditando.presupuesto === undefined || !bodaEditando.idPlanner) {
       setErrorModal('Fecha, presupuesto y planner son obligatorios');
+      return;
+    }
+
+    if (bodaEditando.idNovio1 && bodaEditando.idNovio2 && bodaEditando.idNovio1 === bodaEditando.idNovio2) {
+      setErrorModal('Novio 1 y Novio 2 no pueden ser la misma persona');
       return;
     }
 
     setGuardando(true);
     setErrorModal('');
 
+    const payload = {
+      ...bodaEditando,
+      presupuesto: Number(bodaEditando.presupuesto),
+      seniaBoda: Number(bodaEditando.seniaBoda || 0),
+      idPlanner: Number(bodaEditando.idPlanner),
+      idNovio1: Number(bodaEditando.idNovio1),
+      idNovio2: Number(bodaEditando.idNovio2),
+      servicios: bodaEditando.serviciosSeleccionados || [],
+      idServicios: bodaEditando.serviciosSeleccionados || [],
+      idServicio1: (bodaEditando.serviciosSeleccionados && bodaEditando.serviciosSeleccionados[0]) || null,
+      idServicio2: (bodaEditando.serviciosSeleccionados && bodaEditando.serviciosSeleccionados[1]) || null,
+    };
+
     try {
       const respuesta = await fetch(`http://localhost:3000/bodas/${bodaEditando.idBoda}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodaEditando)
+        body: JSON.stringify(payload)
       });
 
       const data = await respuesta.json();
@@ -230,6 +280,20 @@ export default function ListaBodas() {
       </div>
     );
   }
+
+  // Filtrado de novios para el modal de edición
+  const listaNoviosFiltrados = personasDisponibles.filter(p => esRolNovio(p.rol));
+  const noviosParaModal = listaNoviosFiltrados.length > 0 ? listaNoviosFiltrados : personasDisponibles;
+
+  // Cálculo y Validación de Presupuesto en Tiempo Real para el Modal
+  const presupuestoModal = bodaEditando ? (parseFloat(bodaEditando.presupuesto) || 0) : 0;
+  const serviciosModalSeleccionados = (bodaEditando && bodaEditando.serviciosSeleccionados) || [];
+  const costoTotalServiciosModal = serviciosModalSeleccionados.reduce((acc, id) => {
+    const serv = serviciosDisponibles.find(s => s.idServicio === id);
+    return acc + (serv ? (parseFloat(serv.precio) || 0) : 0);
+  }, 0);
+  const excedePresupuestoModal = presupuestoModal > 0 && costoTotalServiciosModal > presupuestoModal;
+  const montoExcedidoModal = costoTotalServiciosModal - presupuestoModal;
 
   return (
     <div className="contenedor-bodas">
@@ -309,8 +373,139 @@ export default function ListaBodas() {
                 </div>
               )}
 
+              {/* Servicios contratados */}
+              {Array.isArray(boda.servicios) && boda.servicios.length > 0 && (
+                <div style={{ marginTop: '12px', padding: '10px', background: '#fdfaf6', borderRadius: '8px', border: '1px solid #f0e4d7', fontSize: '13px' }}>
+                  <span style={{ fontWeight: '600', color: '#b57945', display: 'block', marginBottom: '4px' }}>🛠️ Servicios incluidos:</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {boda.servicios.map(s => (
+                      <span
+                        key={s.idServicio}
+                        style={{
+                          background: '#fff',
+                          border: '1px solid #d4a373',
+                          borderRadius: '4px',
+                          padding: '3px 8px',
+                          fontSize: '12px',
+                          color: '#333'
+                        }}
+                      >
+                        {s.nombre} ({formatearMoneda(s.precio)})
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Sección de Gestión de Invitados de la Boda */}
+              <div style={{ marginTop: '14px', padding: '12px', background: '#faf8f5', borderRadius: '8px', border: '1px solid #ebdcd0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#8c5828', fontSize: '13px' }}>
+                    👥 Invitados ({Array.isArray(boda.invitados) ? boda.invitados.length : 0})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setBodaInvitados({ ...boda, abrirDirecto: true })}
+                    style={{
+                      backgroundColor: '#d4a373',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '5px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ➕ Asociar Invitados
+                  </button>
+                </div>
+
+                {/* Tabla de Invitados Cargados */}
+                {Array.isArray(boda.invitados) && boda.invitados.length > 0 ? (
+                  <div style={{ maxHeight: '140px', overflowY: 'auto', background: 'white', borderRadius: '5px', border: '1px solid #e2e8f0', marginBottom: '8px' }}>
+                    <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ background: '#f8f9fa', color: '#555', borderBottom: '1px solid #dee2e6' }}>
+                          <th style={{ padding: '6px 8px' }}>Nombre</th>
+                          <th style={{ padding: '6px 8px' }}>Correo</th>
+                          <th style={{ padding: '6px 8px', textAlign: 'center' }}>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {boda.invitados.map(inv => (
+                          <tr key={inv.idBodaInvitado || inv.idPerso} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                            <td style={{ padding: '6px 8px', fontWeight: '600' }}>{inv.nombreApe}</td>
+                            <td style={{ padding: '6px 8px', color: '#666' }}>{inv.correoElect || '—'}</td>
+                            <td style={{ padding: '6px 8px', textAlign: 'center' }}>
+                              {inv.invitacionEnviada === 1 || inv.invitacionEnviada === true ? (
+                                <span style={{ color: '#065f46', background: '#d1fae5', border: '1px solid #a7f3d0', padding: '2px 6px', borderRadius: '10px', fontSize: '10px', fontWeight: 'bold' }}>
+                                  ✓ Enviado
+                                </span>
+                              ) : (
+                                <span style={{ color: '#92400e', background: '#fef3c7', border: '1px solid #fde68a', padding: '2px 6px', borderRadius: '10px', fontSize: '10px', fontWeight: 'bold' }}>
+                                  ⏳ Pendiente
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p style={{ margin: '6px 0 10px 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
+                    No hay invitados asociados a esta boda aún.
+                  </p>
+                )}
+
+                {/* Botón de Envío Masivo de Invitaciones */}
+                <button
+                  type="button"
+                  onClick={() => setBodaInvitados(boda)}
+                  style={{
+                    width: '100%',
+                    backgroundColor: '#2b8a3e',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 12px',
+                    borderRadius: '5px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  ✉️ Enviar Invitaciones a Todos
+                </button>
+              </div>
+
               {/* Botones de acción */}
-              <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+              <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => setBodaInvitados(boda)}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#4a5568',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 10px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                  title="Abrir panel completo de invitados"
+                >
+                  👥 Ver Panel Invitados
+                </button>
                 <button
                   onClick={() => abrirModalEditar(boda)}
                   style={{
@@ -318,14 +513,14 @@ export default function ListaBodas() {
                     backgroundColor: '#d4a373',
                     color: 'white',
                     border: 'none',
-                    padding: '8px 12px',
+                    padding: '8px 10px',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     fontWeight: 'bold',
-                    fontSize: '14px'
+                    fontSize: '13px'
                   }}
                 >
-                  ✏️ Editar Boda
+                  ✏️ Editar
                 </button>
                 <button
                   onClick={() => manejarEliminacion(boda.idBoda)}
@@ -339,6 +534,7 @@ export default function ListaBodas() {
                     fontWeight: 'bold',
                     fontSize: '14px'
                   }}
+                  title="Eliminar boda"
                 >
                   🗑️
                 </button>
@@ -431,35 +627,133 @@ export default function ListaBodas() {
 
               <div className="form-fila">
                 <div className="form-grupo">
-                  <label>Novio/a 1</label>
+                  <label>Novio/a 1 *</label>
                   <select
                     name="idNovio1"
                     value={bodaEditando.idNovio1}
                     onChange={manejarCambioModal}
+                    required
                   >
-                    <option value="">Seleccione persona...</option>
-                    {personasDisponibles.map(p => (
-                      <option key={p.idPerso} value={p.idPerso}>
-                        {p.nombreApe} ({p.rol})
+                    <option value="">Seleccione novio/a 1...</option>
+                    {noviosParaModal.map(p => (
+                      <option
+                        key={p.idPerso}
+                        value={p.idPerso}
+                        disabled={Number(bodaEditando.idNovio2) === p.idPerso}
+                      >
+                        {p.nombreApe}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div className="form-grupo">
-                  <label>Novio/a 2</label>
+                  <label>Novio/a 2 *</label>
                   <select
                     name="idNovio2"
                     value={bodaEditando.idNovio2}
                     onChange={manejarCambioModal}
+                    required
                   >
-                    <option value="">Seleccione persona...</option>
-                    {personasDisponibles.map(p => (
-                      <option key={p.idPerso} value={p.idPerso}>
-                        {p.nombreApe} ({p.rol})
+                    <option value="">Seleccione novio/a 2...</option>
+                    {noviosParaModal.map(p => (
+                      <option
+                        key={p.idPerso}
+                        value={p.idPerso}
+                        disabled={Number(bodaEditando.idNovio1) === p.idPerso}
+                      >
+                        {p.nombreApe}
                       </option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              {/* Selector de Servicios con Checkboxes */}
+              <div className="form-grupo">
+                <label>🛠️ Servicios para la Boda</label>
+                <div className="modal-servicios-lista">
+                  {serviciosDisponibles.length === 0 ? (
+                    <p style={{ color: '#888', fontSize: '13px', margin: '4px 0' }}>No hay servicios registrados.</p>
+                  ) : (
+                    serviciosDisponibles.map(serv => {
+                      const estaSel = serviciosModalSeleccionados.includes(serv.idServicio);
+                      const precio = parseFloat(serv.precio) || 0;
+                      return (
+                        <div
+                          key={serv.idServicio}
+                          className={`modal-servicio-item ${estaSel ? 'seleccionado' : ''}`}
+                          onClick={() => manejarToggleServicioModal(serv.idServicio)}
+                        >
+                          <label
+                            className="modal-servicio-label"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={estaSel}
+                              onChange={() => manejarToggleServicioModal(serv.idServicio)}
+                            />
+                            <span>{serv.nombre || `Servicio #${serv.idServicio}`}</span>
+                          </label>
+                          <span className="modal-servicio-precio">
+                            {formatearMoneda(precio)}
+                          </span>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Cálculo y Validación de Presupuesto en Tiempo Real */}
+              <div className="modal-presupuesto-box">
+                <div className="modal-presupuesto-fila">
+                  <span>Presupuesto ingresado:</span>
+                  <strong>{formatearMoneda(presupuestoModal)}</strong>
+                </div>
+                <div className="modal-presupuesto-fila">
+                  <span>Total servicios seleccionados ({serviciosModalSeleccionados.length}):</span>
+                  <strong style={{ color: excedePresupuestoModal ? '#b91c1c' : '#047857' }}>
+                    {formatearMoneda(costoTotalServiciosModal)}
+                  </strong>
+                </div>
+
+                {excedePresupuestoModal && (
+                  <div className="modal-alerta-exceso">
+                    ⚠️ El costo total excede el presupuesto por {formatearMoneda(montoExcedidoModal)}
+                  </div>
+                )}
+
+                {!excedePresupuestoModal && presupuestoModal > 0 && serviciosModalSeleccionados.length > 0 && (
+                  <div className="modal-alerta-ok">
+                    ✓ Total dentro del presupuesto (Disponible: {formatearMoneda(presupuestoModal - costoTotalServiciosModal)})
+                  </div>
+                )}
+              </div>
+
+              {/* Sección de Invitados dentro del Modal de Edición */}
+              <div style={{ marginTop: '10px', padding: '12px', background: '#faf8f5', borderRadius: '8px', border: '1px solid #ebdcd0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontWeight: 'bold', color: '#8c5828', fontSize: '13px' }}>
+                    👥 Gestión de Invitados
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setBodaInvitados({ ...bodaEditando, novios: bodas.find(b => b.idBoda === bodaEditando.idBoda)?.novios, abrirDirecto: true })}
+                    style={{
+                      backgroundColor: '#d4a373',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '5px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ➕ Asociar Invitados
+                  </button>
                 </div>
               </div>
 
@@ -474,6 +768,16 @@ export default function ListaBodas() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Modal de Gestión de Invitados y Envío Masivo */}
+      {bodaInvitados && (
+        <GestionInvitadosModal
+          boda={bodaInvitados}
+          abrirDirectoAsociar={!!bodaInvitados.abrirDirecto}
+          alCerrar={() => setBodaInvitados(null)}
+          alActualizar={cargarBodas}
+        />
       )}
     </div>
   );

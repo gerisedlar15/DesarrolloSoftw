@@ -163,6 +163,104 @@
   margin-bottom: 8px;
 }
 
+/* Servicios y Presupuesto en Modal */
+.modal-servicios-lista {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  padding: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-servicio-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modal-servicio-item:hover {
+  border-color: #d4a373;
+}
+
+.modal-servicio-item.seleccionado {
+  background-color: #fef8f0;
+  border-color: #d4a373;
+}
+
+.modal-servicio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+}
+
+.modal-servicio-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #d4a373;
+  cursor: pointer;
+}
+
+.modal-servicio-precio {
+  font-weight: bold;
+  font-size: 13px;
+  color: #b57945;
+}
+
+.modal-presupuesto-box {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 13px;
+}
+
+.modal-presupuesto-fila {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.modal-presupuesto-fila:last-child {
+  margin-bottom: 0;
+}
+
+.modal-alerta-exceso {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background-color: #fee2e2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.modal-alerta-ok {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

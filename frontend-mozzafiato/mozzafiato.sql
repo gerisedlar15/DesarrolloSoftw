@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-06-2026 a las 00:55:27
+-- Tiempo de generación: 10-11-2026 a las 01:40:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -41,7 +41,21 @@ CREATE TABLE `boda` (
 --
 
 INSERT INTO `boda` (`idBoda`, `fechaHoraPlanif`, `presupuesto`, `seniaBoda`, `estadoBoda`, `idPlanner`) VALUES
-(3, '2026-10-10 20:30:00', 6500000.00, 800000.00, 'Planificada', 2);
+(16, '2026-12-21 00:00:00', 60000.00, 10000.00, 'Planificada', 2),
+(17, '2039-03-15 20:00:00', 300000.00, 10.00, 'Planificada', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `boda_invitados`
+--
+
+CREATE TABLE `boda_invitados` (
+  `idBodaInvitado` int(11) NOT NULL,
+  `idBoda` int(11) NOT NULL,
+  `idPerso` int(11) NOT NULL,
+  `invitacionEnviada` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -59,8 +73,35 @@ CREATE TABLE `boda_novio` (
 --
 
 INSERT INTO `boda_novio` (`idBoda`, `idNovio`) VALUES
-(3, 1),
-(3, 2);
+(16, 6),
+(16, 18),
+(17, 6),
+(17, 18);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `boda_servicios`
+--
+
+CREATE TABLE `boda_servicios` (
+  `idServicios` int(11) NOT NULL,
+  `idBoda` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `boda_servicios`
+--
+
+INSERT INTO `boda_servicios` (`idServicios`, `idBoda`) VALUES
+(2, 12),
+(1, 12),
+(1, 14),
+(2, 14),
+(1, 16),
+(1, 17),
+(4, 17),
+(5, 17);
 
 -- --------------------------------------------------------
 
@@ -73,28 +114,6 @@ CREATE TABLE `invitados` (
   `fechaNac` date DEFAULT NULL,
   `estado` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `novio`
---
-
-CREATE TABLE `novio` (
-  `idNovio` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `novio`
---
-
-INSERT INTO `novio` (`idNovio`) VALUES
-(1),
-(2),
-(3),
-(4),
-(5),
-(6);
 
 -- --------------------------------------------------------
 
@@ -116,12 +135,11 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`idPerso`, `nombreApe`, `telefono`, `correoElect`, `observacion`, `rol`) VALUES
-(1, 'Juan Pérez', '341-555111', 'juan@mail.com', 'vegetariano', 'Novio'),
-(2, 'Nicole Gatti', '341-555222', 'nicole@mail.com', 'vegetariana', 'Novio'),
-(3, 'Pamela', '3401643052', 'pameterreno@gmail.com', 'vegana', 'Novio'),
-(4, 'Dardo', '340165372', 'dardo@gmail.com', 'nada', 'Novio'),
-(5, 'Sherazade', '45632785', 'sheras@gmail.com', 'nada', 'Novio'),
-(6, 'Geraldine', '3401653728', 'geri@gmail.com', 'carnivora', 'Novio');
+(6, 'Geraldine S', '3401653728', 'geri@gmail.com', 'carnivora', 'Novio'),
+(12, 'Pamela ', '3401522557', 'pameterreno@hotmail.com', '-', 'Invitado'),
+(15, 'asdraaa', '21827741672', 'gerisedlar15@gmail.com', 'veganito', 'Invitado'),
+(16, 'lolhgfgt', '123456', 'gerisedlar15@gmail.com', 'veganito', 'Invitado'),
+(18, 'Angelo', '3402656478', 'gerisedlar15@gmail.com', 'veganito', 'Novio');
 
 -- --------------------------------------------------------
 
@@ -141,8 +159,37 @@ CREATE TABLE `planner` (
 --
 
 INSERT INTO `planner` (`idPlanner`, `nombre`, `usuario`, `contrasenia`) VALUES
-(2, 'Geraldine S', 'admin', '1234'),
-(3, 'Lourdes Ose', '', '');
+(2, 'Geraldine Sedra', 'admin', '1234'),
+(3, 'Lourdes Ose', '', ''),
+(14, 'marcela', 'marcelita1234', '1234'),
+(15, 'marcela', 'marcelongui1234', '124'),
+(16, 'marcel', 'kWFJAS', 'JSBAJBF'),
+(18, 'aaaaaaaaaaaaaaaaaaaaaa', 'aaaaaaaaaaaaaaa', 'dd'),
+(21, 'locurita', 'mix123', '12345');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `servicios`
+--
+
+CREATE TABLE `servicios` (
+  `idServicio` int(50) NOT NULL,
+  `telefono` varchar(20) NOT NULL,
+  `email` varchar(20) NOT NULL,
+  `descripcion` varchar(20) NOT NULL,
+  `nombre` varchar(100) DEFAULT NULL,
+  `precio` decimal(12,2) NOT NULL DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `servicios`
+--
+
+INSERT INTO `servicios` (`idServicio`, `telefono`, `email`, `descripcion`, `nombre`, `precio`) VALUES
+(1, '3401653076', 'bebida@gmail.com', 'Barra libre', 'Bebidas Premium', 15000.00),
+(4, '3401643052', 'fotos@gmail.com', 'Fotografia en hd', 'fotografia', 25000.00),
+(5, '341-456789', 'catering@mail.com', 'Menú gourmet complet', 'Catering Gourmet', 15000.00);
 
 --
 -- Índices para tablas volcadas
@@ -156,23 +203,25 @@ ALTER TABLE `boda`
   ADD KEY `idPlanner` (`idPlanner`);
 
 --
+-- Indices de la tabla `boda_invitados`
+--
+ALTER TABLE `boda_invitados`
+  ADD PRIMARY KEY (`idBodaInvitado`),
+  ADD UNIQUE KEY `unique_boda_persona` (`idBoda`,`idPerso`),
+  ADD KEY `idPerso` (`idPerso`);
+
+--
 -- Indices de la tabla `boda_novio`
 --
 ALTER TABLE `boda_novio`
   ADD PRIMARY KEY (`idBoda`,`idNovio`),
-  ADD KEY `idNovio` (`idNovio`);
+  ADD KEY `boda_novio_persona_fk` (`idNovio`);
 
 --
 -- Indices de la tabla `invitados`
 --
 ALTER TABLE `invitados`
   ADD PRIMARY KEY (`idInvi`);
-
---
--- Indices de la tabla `novio`
---
-ALTER TABLE `novio`
-  ADD PRIMARY KEY (`idNovio`);
 
 --
 -- Indices de la tabla `persona`
@@ -188,6 +237,12 @@ ALTER TABLE `planner`
   ADD UNIQUE KEY `usuario` (`usuario`);
 
 --
+-- Indices de la tabla `servicios`
+--
+ALTER TABLE `servicios`
+  ADD PRIMARY KEY (`idServicio`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -195,19 +250,31 @@ ALTER TABLE `planner`
 -- AUTO_INCREMENT de la tabla `boda`
 --
 ALTER TABLE `boda`
-  MODIFY `idBoda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idBoda` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT de la tabla `boda_invitados`
+--
+ALTER TABLE `boda_invitados`
+  MODIFY `idBodaInvitado` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `idPerso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idPerso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `planner`
 --
 ALTER TABLE `planner`
-  MODIFY `idPlanner` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idPlanner` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT de la tabla `servicios`
+--
+ALTER TABLE `servicios`
+  MODIFY `idServicio` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
@@ -220,23 +287,24 @@ ALTER TABLE `boda`
   ADD CONSTRAINT `boda_ibfk_1` FOREIGN KEY (`idPlanner`) REFERENCES `planner` (`idPlanner`) ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `boda_invitados`
+--
+ALTER TABLE `boda_invitados`
+  ADD CONSTRAINT `boda_invitados_ibfk_1` FOREIGN KEY (`idBoda`) REFERENCES `boda` (`idBoda`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `boda_invitados_ibfk_2` FOREIGN KEY (`idPerso`) REFERENCES `persona` (`idPerso`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `boda_novio`
 --
 ALTER TABLE `boda_novio`
   ADD CONSTRAINT `boda_novio_ibfk_1` FOREIGN KEY (`idBoda`) REFERENCES `boda` (`idBoda`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `boda_novio_ibfk_2` FOREIGN KEY (`idNovio`) REFERENCES `novio` (`idNovio`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `boda_novio_persona_fk` FOREIGN KEY (`idNovio`) REFERENCES `persona` (`idPerso`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `invitados`
 --
 ALTER TABLE `invitados`
   ADD CONSTRAINT `invitados_ibfk_1` FOREIGN KEY (`idInvi`) REFERENCES `persona` (`idPerso`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `novio`
---
-ALTER TABLE `novio`
-  ADD CONSTRAINT `novio_ibfk_1` FOREIGN KEY (`idNovio`) REFERENCES `persona` (`idPerso`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
